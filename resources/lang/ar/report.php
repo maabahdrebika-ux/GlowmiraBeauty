@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'تقارير المبيعات',
+    'breadcrumb' => 'التقارير',
+    'sales_reports' => 'تقارير المبيعات',
+    'search' => 'بحث',
+    'from_date' => 'من تاريخ',
+    'to_date' => 'إلى تاريخ',
+    'operation_number' => 'رقم العملية',
+    'phone_number' => 'رقم الهاتف',
+    'customer_name' => 'اسم العميل',
+    'search_button' => 'بحث',
+    'display_sales' => 'عرض المبيعات',
+    'operation_number_table' => 'رقم العملية',
+    'full_name' => 'اسم الجهة/الاسم الكامل',
+    'phone_number_table' => 'رقم الهاتف',
+    'total' => 'الاجمالي',
+    'exchange_type' => 'نوع الصرف',
+    'sale_date' => 'تاريخ البيع',
+    'show_details' => 'عرض التفاصيل',
+    'show_invoice' => 'عرض الفاتورة',
+    'total_amount' => 'الإجمالي',
+    'error' => 'خطأ',
+    'error_message' => 'اختر عنصر البحث',
+    'date_error' => 'تأكد أن تاريخ البداية أقل من تاريخ النهاية',
+    'no_sales' => 'لا يوجد مبيعات',
+    'data_error' => 'خطأ في جلب البيانات',
+    'copy' => 'نسخ',
+    'export_excel' => 'excel تصدير كـ',
+    'columns' => 'الأعمدة',
+    'currency' => 'دينار'
+];

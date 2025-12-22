@@ -1,0 +1,47 @@
+<?php
+
+return [
+
+    'title' => 'Blogs',
+    'add' => 'Add Blog',
+    'show' => 'Show Blogs',
+    'title_ar_table' => 'Arabic Title',
+    'title_en_table' => 'English Title',
+    'description_table' => 'Description',
+    'image_table' => 'Image',
+    'create_date_table' => 'Create Date',
+    'status_table' => 'Blog Status',
+    'edit' => 'Edit',
+    'activate_deactivate' => 'Activate/Deactivate',
+    'title_ar' => 'Arabic Title',
+    'title_en' => 'English Title',
+    'description' => 'Description',
+    'image' => 'Image',
+    'addbtn' => 'Add',
+    'editbtn' => 'Edit',
+
+    'title_ar_required' => 'The Arabic title field is required.',
+    'title_en_required' => 'The English title field is required.',
+    'description_required' => 'The description field is required.',
+    'image_invalid' => 'The uploaded file must be an image.',
+    'image_mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+    'image_max' => 'The image may not be greater than 2MB.',
+    'image_note' => 'Recommended size: 360x240 pixels. Image will be automatically resized.',
+    'current_image' => 'Current image',
+    'copy' => 'Copy',
+    'export_excel' => 'Export Excel',
+    'columns' => 'Columns',
+    'folowus' => 'Follow Us',
+    'about' => 'About Us',
+    'edit_table' => 'Edit',
+    'add_success' => 'Blog added successfully.',
+    'update_success' => 'Blog updated successfully.',
+    'delete_success' => 'Blog deleted successfully.',
+    'notfound' => 'Blog not found.',
+    'changestatuesalert' => 'Blog status changed successfully.',
+
+    'popular_posts' => 'Popular Posts',
+    'recently_added' => 'Recently Added',
+    'no_popular_posts' => 'No popular posts available.',
+
+];

@@ -1,0 +1,46 @@
+<?php
+
+return [
+
+    'title' => 'المدونات',
+    'add' => 'إضافة مدونة',
+    'show' => 'عرض المدونات',
+    'title_ar_table' => 'العنوان بالعربية',
+    'title_en_table' => 'العنوان بالإنجليزية',
+    'description_table' => 'الوصف',
+    'image_table' => 'الصورة',
+    'create_date_table' => 'تاريخ الإنشاء',
+    'status_table' => 'حالة المدونة',
+    'edit' => 'تعديل',
+        'folowus' => 'تابعنا',
+    'activate_deactivate' => 'تفعيل/إلغاء تفعيل',
+    'title_ar' => 'العنوان بالعربية',
+    'title_en' => 'العنوان بالإنجليزية',
+    'description' => 'الوصف',
+    'image' => 'الصورة',
+    'addbtn' => 'إضافة',
+    'editbtn' => 'تعديل',
+
+    'title_ar_required' => 'حقل العنوان بالعربية مطلوب.',
+    'title_en_required' => 'حقل العنوان بالإنجليزية مطلوب.',
+    'description_required' => 'حقل الوصف مطلوب.',
+    'image_invalid' => 'يجب أن يكون الملف المرفوع صورة.',
+    'image_mimes' => 'يجب أن تكون الصورة ملف من نوع: jpeg, png, jpg, gif.',
+    'image_max' => 'يجب ألا تكون الصورة أكبر من 2 ميجابايت.',
+    'image_note' => 'الحجم الموصى به: 360x240 بكسل. سيتم تغيير حجم الصورة تلقائياً.',
+    'current_image' => 'الصورة الحالية',
+    'copy' => 'نسخ',
+    'export_excel' => 'تصدير Excel',
+    'columns' => 'الأعمدة',
+    'edit_table' => 'تعديل',
+    'add_success' => 'تم إضافة المدونة بنجاح.',
+    'update_success' => 'تم تحديث المدونة بنجاح.',
+    'delete_success' => 'تم حذف المدونة بنجاح.',
+    'notfound' => 'المدونة غير موجودة.',
+    'changestatuesalert' => 'تم تغيير حالة المدونة بنجاح.',
+
+    'popular_posts' => 'المشاركات الشائعة',
+    'recently_added' => 'تمت الإضافة مؤخرًا',
+    'no_popular_posts' => 'لا توجد مشاركات شائعة متوفرة.',
+
+];

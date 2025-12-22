@@ -1,0 +1,52 @@
+<?php
+return [
+    'home' => 'الرئيسية',
+    'about' => 'من نحن',
+    'projects' => 'مشاريعنا',
+    'blog' => 'المدونة',
+    'research' => 'البحوث',
+    'contact' => 'اتصال بنا',
+    'language' => 'English', // English text for switch button
+    'search' => 'بحث...',
+    'contact_us' => 'اتصل بنا',
+    'location' => 'الموقع',
+    'open_hours' => 'ساعات العمل',
+    'open_days' => 'الأحد - الجمعة',
+    'email' => 'البريد الإلكتروني',
+    'call' => 'اتصل بنا',
+    'your_name' => 'اسمك',
+    'your_email' => 'بريدك الإلكتروني',
+    'subject' => 'الموضوع',
+    'message' => 'الرسالة',
+    'send_message' => 'إرسال الرسالة',
+    'copyright' => 'حقوق النشر',
+    'all_rights_reserved' => 'جميع الحقوق محفوظة.',
+    'subject' => 'الموضوع',
+    'message' => 'الرسالة',
+    'full_name' => 'الاسم بالكامل',
+    'email' => 'البريد الإلكتروني',
+    'send' => 'ارسال',
+    'name_required' => 'من فضلك أدخل الاسم',
+    'message_required' => 'من فضلك أدخل الرسالة',
+    'subject_required' => 'من فضلك أدخل الموضوع',
+    'email_required' => 'من فضلك أدخل البريد الإلكتروني',
+    'email_valid' => 'يرجى إدخال بريد إلكتروني صالح',
+
+    'forbidden' => 'ممنوع الوصول',
+    'error_403' => '403',
+    'return_to_login' => 'العودة إلى الرئيسية',
+    'not_found' => 'عذراً! الصفحة غير موجودة',
+
+    'not_found' => 'عذراً! الصفحة غير موجودة',
+    'error_404' => '404',
+    'return_home' => 'العودة إلى الرئيسية',
+
+    'category' => 'الفئة',
+    'all' => 'عرض الكل',
+
+    'buy_more' => 'اشترِ $:amount.00',
+    'more_to_get' => 'المزيد للحصول على',
+    'freeship' => 'شحن مجاني',
+    'note' => 'ملاحظة',
+    'shipping' => 'الشحن'
+];

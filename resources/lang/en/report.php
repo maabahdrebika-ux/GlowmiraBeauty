@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Sales Reports',
+    'breadcrumb' => 'Reports',
+    'sales_reports' => 'Sales Reports',
+    'search' => 'Search',
+    'from_date' => 'From Date',
+    'to_date' => 'To Date',
+    'operation_number' => 'Operation Number',
+    'phone_number' => 'Phone Number',
+    'customer_name' => 'Customer Name',
+    'search_button' => 'Search',
+    'display_sales' => 'Display Sales',
+    'operation_number_table' => 'Operation Number',
+    'full_name' => 'Full Name/Entity Name',
+    'phone_number_table' => 'Phone Number',
+    'total' => 'Total',
+    'exchange_type' => 'Exchange Type',
+    'sale_date' => 'Sale Date',
+    'show_details' => 'Show Details',
+    'show_invoice' => 'Show Invoice',
+    'total_amount' => 'Total Amount',
+    'error' => 'Error',
+    'error_message' => 'Please select a search criteria',
+    'date_error' => 'Please ensure start date is less than end date',
+    'no_sales' => 'No sales found',
+    'data_error' => 'Error fetching data',
+    'copy' => 'Copy',
+    'export_excel' => 'Export to Excel',
+    'columns' => 'Columns',
+    'currency' => 'Dinar'
+];
