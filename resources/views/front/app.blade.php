@@ -439,7 +439,7 @@
                         </div>
                     @else
                         <!-- User is not logged in -->
-                        <a href="" style="color: white;" class="btn btn-sm btn-outline-light mx-1">
+                        <a href="{{route('customer.login')}}" style="color: white;" class="btn btn-sm btn-outline-light mx-1">
                             <i class="fas fa-user"></i> {{ __('app.login') }}
                         </a>
                     @endauth
