@@ -20,7 +20,7 @@
                 <div class="col-lg-6 col-md-8 col-sm-10">
                     <div class="login__content">
                         <div class="login__form">
-                            <form action="{{ route('password.email') }}" method="POST">
+                            <form action="{{ route('customer.password.email') }}" method="POST">
                                 @csrf
                                 <div class="checkout__form">
                                     <div class="checkout__form__contact">

@@ -28,7 +28,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:manage users');
+        $this->middleware('permission:manage users', ['except' => ['show', 'showChangePasswordForm', 'changePassword']]);
 
     }
 
@@ -227,7 +227,7 @@ class UserController extends Controller
         return view('dashbord.users.change_form');
     }
 
-    public function changePassword(Request $request)
+    public function changePassword(Request $request, $id = null)
     {
         $messages = [
 

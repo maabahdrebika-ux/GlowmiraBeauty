@@ -20,7 +20,7 @@
                 <div class="col-lg-6 col-md-8 col-sm-10">
                     <div class="login__content">
                         <div class="login__form">
-                            <form action="{{ route('password.update') }}" method="POST">
+                            <form action="{{ route('customer.password.update') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="token" value="{{ $token }}">
                                 

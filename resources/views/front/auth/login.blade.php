@@ -88,11 +88,9 @@
                                                 </a>
                                             </p>
 <br/>
-                                            @if (Route::has('password.request'))
-                                                <a href="{{ route('password.request') }}" class="text-muted">
-                                                    {{ trans('app.forgot_your_password') }}
-                                                </a>
-                                            @endif
+                                            <a href="{{ route('customer.password.request') }}" class="text-muted">
+                                                {{ trans('app.forgot_your_password') }}
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

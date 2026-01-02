@@ -1,52 +1,59 @@
 @extends('layouts.authapp')
-@section('title',"  نسيت كلمة المرور")
+@section('title', trans('login.forgot_password'))
 
 @section('content')
-    <form method="POST" class="frm-single" action="{{ route('password.email') }}" style="max-width: 600px;">
-        @csrf
-    <div class="inside">
-        <div class="title"><img src="{{asset('logo.png')}}" alt="" style="max-width: 80% !important;"></div>
+<div class="card mb-0">
+    <div class="card-body">
+        <div class="p-2">
+            <h4 class="text-muted float-right font-18 mt-4">{{ trans('login.forgot_password') }}</h4>
+            <div>
+                <a href="{{ url('/') }}" class="logo logo-admin"><img src="{{ asset('logoo11.PNG') }}" height="200" alt="logo"></a>
+            </div>
+        </div>
 
-        <!-- /.title -->
-        <div class="frm-title"> نسيت كلمة المرور</div>
-        <!-- /.frm-title -->
-        @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+        <div class="p-2">
+            {{-- Language selector with flag images --}}
+            <div style="text-align: {{ app()->getLocale() === 'ar' ? 'left' : 'right' }}; margin-bottom: 20px;">
+                <a href="{{ route('changeLanguage', ['language' => 'en']) }}" style="margin-right: 10px;">
+                    <img src="{{ asset('united-kingdom.png') }}" alt="English" style="height: 30px; width: auto; border: none;">
+                </a>
+                <a href="{{ route('changeLanguage', ['language' => 'ar']) }}">
+                    <img src="{{ asset('libya.png') }}" alt="العربية" style="height: 30px; width: auto; border: none;">
+                </a>
+            </div>
 
-      
-                    <!-- /.frm-title -->
-                    <div class="frm-input"><input type="text"  name="email" placeholder="{{trans('login.email')}}" class="frm-inp form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"><i class="fa fa-user frm-ico"></i></div>
-                    @error('email')
-                    <span class="invalid-feedback" style="color: red" role="alert">
-                        {{ $message }}
-                    </span>
-                @enderror
+            @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
+                </div>
+            @endif
 
+            <form class="form-horizontal m-t-20" method="POST" action="{{ route('password.email') }}">
+                @csrf
 
-   
-     
-        
-        <!-- /.clearfix -->
-        <button type="submit" class="frm-submit">إرسال رابط إعادة تعيين كلمة السر<i class="fa fa-arrow-circle-right"></i></button>
-       <!-- /.frm-input -->
-       <div class="clearfix margin-bottom-20">
-            
-      
-        <div class="pull-right">
-        
-            
-            
-            <a href="{{ route('login') }}" class="a-link"><i class="fa fa-unlock-alt"></i>{{trans('login.login')}}</a></div>
-        <!-- /.pull-right -->
+                <div class="form-group row">
+                    <div class="col-12">
+                        <input class="form-control @error('email') is-invalid @enderror" type="email" name="email" required="" placeholder="{{ trans('login.email') }}" value="{{ old('email') }}">
+                        @error('email')
+                        <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group text-center row m-t-20">
+                    <div class="col-12">
+                        <button class="btn btn-primary btn-block waves-effect waves-light" type="submit">{{ trans('passwords.send_reset_link') }}</button>
+                    </div>
+                </div>
+
+                <div class="form-group m-t-10 mb-0 row">
+                    <div class="col-sm-7 m-t-20">
+                        <a href="{{ route('login') }}" class="text-muted"><i class="mdi mdi-login"></i> {{ trans('login.login') }}</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
     </div>
-        <!-- /.row -->
-        <div class="frm-footer"><?php echo date("Y"); ?> &copy;{{trans('login.copyright')}} </div>
-        <!-- /.footer -->
-    </div>
-    <!-- .inside -->
-</form>
-
+</div>
 @endsection

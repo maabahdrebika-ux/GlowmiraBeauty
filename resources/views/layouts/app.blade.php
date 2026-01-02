@@ -246,37 +246,56 @@
                         <li class="{{ Request::is('home*') ? 'active' : '' }}">
                             <a href="{{ route('home') }}"><i class="dripicons-home"></i> <span>{{ trans('app.dashboard') }}</span></a>
                         </li>
+                        @can('manage users')
                         <li class="{{ Request::is('users*') ? 'active' : '' }}">
                             <a href="{{ route('users') }}"><i class="dripicons-user-group"></i> <span>{{ trans('app.users') }}</span></a>
                         </li>
                         <li class="{{ Request::is('roles*') ? 'active' : '' }}">
                             <a href="{{ route('roles.index') }}"><i class="dripicons-lock"></i> <span>{{ trans('roles.roles_permissions') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage addresses')
                         <li class="{{ Request::is('addresses*') ? 'active' : '' }}">
                             <a href="{{ route('addresses') }}"><i class="dripicons-location"></i> <span>{{ trans('app.address') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage customers')
                         <li class="{{ Request::is('customers*') ? 'active' : '' }}">
                             <a href="{{ route('customers.index') }}"><i class="dripicons-user"></i> <span>{{ trans('customers.customers') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage categories')
                         <li class="{{ Request::is('categories*') ? 'active' : '' }}">
                             <a href="{{ route('categories.index') }}"><i class="dripicons-list"></i> <span>{{ trans('app.categories') }}</span></a>
                         </li>
+                        @endcan
                      
+                        @can('manage products')
                         <li class="{{ Request::is('products*') ? 'active' : '' }}">
                             <a href="{{ route('products') }}"><i class="fab fa-microsoft"></i> <span>{{ trans('app.products') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage discounts')
                         <li class="{{ Request::is('discounts*') ? 'active' : '' }}">
                             <a href="{{ route('discounts') }}"><i class="fa fa-percent"></i> <span>{{ trans('app.discounts') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage stock')
                         <li class="{{ Request::is('stock*') ? 'active' : '' }}">
                             <a href="{{ route('stock') }}"><i class=" dripicons-box "></i> <span>{{ trans('app.stock_management') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage suppliers')
                         <li class="{{ Request::is('suppliers*') ? 'active' : '' }}">
                             <a href="{{ route('suppliers') }}"><i class="fa fa-truck"></i> <span>{{ trans('app.suppliers') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage receipts')
                         <li class="{{ Request::is('receipts*') ? 'active' : '' }}">
                             <a href="{{ route('receipts') }}"><i class="dripicons-document"></i> <span>{{ trans('app.receipt_management') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage orders')
                         <li class="has_sub {{ Request::is('pending/order') || Request::is('cancel/order') ? 'active' : '' }}">
                             <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-briefcase"></i> <span>{{ trans('app.order_management') }}</span> <span class="menu-arrow float-right"><i class="mdi mdi-chevron-right"></i></span></a>
                             <ul class="list-unstyled">
@@ -287,12 +306,18 @@
                                 <li><a href="{{ route('cancel/oreder') }}">{{ trans('app.cancel') }}</a></li>
                             </ul>
                         </li>
+                        @endcan
+                        @can('manage sales')
                         <li class="{{ Request::is('Invoice*') ? 'active' : '' }}">
                             <a href="{{ route('Invoice') }}"><i class="dripicons-tag"></i> <span>{{ trans('app.sales_management') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage returns')
                         <li class="{{ Request::is('returns*') ? 'active' : '' }}">
                             <a href="{{ route('returns') }}"><i class="dripicons-view-list-large"></i> <span>{{ trans('app.returns_management') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage reports')
                         <li class="has_sub {{ Request::is('report/sales') || Request::is('report/return') ? 'active' : '' }}">
                             <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-folder-open"></i> <span>{{ trans('app.reports_management') }}</span> <span class="menu-arrow float-right"><i class="mdi mdi-chevron-right"></i></span></a>
                             <ul class="list-unstyled">
@@ -300,6 +325,8 @@
                                 <li><a href="{{ route('report/return') }}">{{ trans('app.returns') }}</a></li>
                             </ul>
                         </li>
+                        @endcan
+                        @can('manage site_settings')
                         <li class="has_sub {{ Request::is('slider*') || Request::is('salesbanners') || Request::is('aboutus') || Request::is('sitesetting') || Request::is('contactus') ? 'active' : '' }}">
                             <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-gear"></i> <span>{{ trans('app.site_settings') }}</span> <span class="menu-arrow float-right"><i class="mdi mdi-chevron-right"></i></span></a>
                             <ul class="list-unstyled">
@@ -308,20 +335,29 @@
                                 <li><a href="{{ route('contactus') }}">{{ trans('app.contact_us') }}</a></li>
                             </ul>
                         </li>
+                        @endcan
+                        @can('manage blogs')
                            <li class="{{ Request::is('blogs*') ? 'active' : '' }}">
                             <a href="{{ route('blogs.index') }}"><i class="dripicons-blog"></i> <span>{{ trans('blog.title') }}</span></a>
                         </li>
+                        @endcan
 
+                        @can('manage reviews')
                         <li class="{{ Request::is('reviews*') ? 'active' : '' }}">
                             <a href="{{ route('reviews.index') }}"><i class="fa fa-star"></i>  <span>{{ trans('reviews.management_title') }}</span></a>
                         </li>
+                        @endcan
                     
+                        @can('manage policies')
                         <li class="{{ Request::is('policy*') ? 'active' : '' }}">
                             <a href="{{ route('policy.index') }}"><i class="dripicons-information"></i> <span>{{ trans('app.site_policies') }}</span></a>
                         </li>
+                        @endcan
+                        @can('manage inbox')
                         <li class="{{ Request::is('inbox*') ? 'active' : '' }}">
                             <a href="{{ route('inbox') }}"><i class="dripicons-mail"></i> <span>{{ trans('app.inbox') }}</span></a>
                         </li>
+                        @endcan
                         <li class="logout-item" style="border-top: 1px solid #ddd; margin-top: 10px;">
                             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="dripicons-exit"></i> {{ trans('app.logout') }}

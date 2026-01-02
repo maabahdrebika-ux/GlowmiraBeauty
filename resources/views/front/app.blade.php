@@ -439,7 +439,7 @@
                         </div>
                     @else
                         <!-- User is not logged in -->
-                        <a href="{{route('customer.login')}}" style="color: white;" class="btn btn-sm btn-outline-light mx-1">
+                        <a href="{{ route('customer.login') }}" style="color: white;" class="btn btn-sm btn-outline-light mx-1">
                             <i class="fas fa-user"></i> {{ __('app.login') }}
                         </a>
                     @endauth
@@ -647,10 +647,121 @@
 
 <script>
 // Universal cart count update function
-
+function updateCartCount() {
+    fetch('{{ route("cart.items.count") }}', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.count !== undefined) {
+            // Update ALL cart counter elements with different class names for compatibility
+            const selectors = ['.cart__quantity', '.cart-count', '.cart-quantity', '.cart-badge'];
+            
+            selectors.forEach(selector => {
+                const cartCountElements = document.querySelectorAll(selector);
+                cartCountElements.forEach(element => {
+                    element.textContent = data.count;
+                });
+            });
+            
+            // If cart drawer is open, refresh the cart display
+            const cartDrawer = document.querySelector('#cart-drawer');
+            if (cartDrawer && cartDrawer.classList.contains('show')) {
+                location.reload(); // Simple way to refresh cart data
+            }
+            
+            // Trigger custom event for other scripts to listen to
+            window.dispatchEvent(new CustomEvent('cartCountUpdated', { 
+                detail: { count: data.count } 
+            }));
+        }
+    })
+    .catch(error => {
+        console.error('Error updating cart count:', error);
+    });
+}
 
 // Remove item from cart function
-
+function removeFromCart(productId) {
+    Swal.fire({
+        title: '{{ __("app.confirm_remove_from_cart") }}',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '{{ __("app.yes_remove") ?? "Yes, remove it!" }}',
+        cancelButtonText: '{{ __("app.cancel") ?? "Cancel" }}'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/cart/remove/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: '{{ __("app.removed") ?? "Removed!" }}',
+                        text: '{{ __("app.item_removed_success") ?? "The item has been removed from your cart." }}',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        position: 'top-end',
+                        toast: true
+                    });
+                    
+                    // Update cart count
+                    updateCartCount();
+                    
+                    // Remove item from DOM
+                    const cartItem = document.querySelector(`[onclick="removeFromCart(${productId})"]`).closest('.cart-item');
+                    if (cartItem) {
+                        cartItem.remove();
+                    }
+                    
+                    // If cart is now empty, reload to show empty state
+                    if (data.cart_count === 0) {
+                        setTimeout(() => location.reload(), 1000);
+                    }
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: '{{ __("app.error") ?? "Error" }}',
+                        text: data.message || '{{ __("app.error_occurred") }}',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showConfirmButton: true,
+                        position: 'center'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: '{{ __("app.error") ?? "Error" }}',
+                    text: '{{ __("app.try_again_later") }}',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    position: 'center'
+                });
+            });
+        }
+    });
+}
 
 // Auto-refresh cart count every 30 seconds
 setInterval(updateCartCount, 30000);

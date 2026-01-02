@@ -39,6 +39,28 @@ Route::get('products/discount', [App\Http\Controllers\IndexController::class, 'd
 Route::get('product/category/{id}', [App\Http\Controllers\IndexController::class, 'productcategory'])->name('product/category');
 
 // Review Routes
+Route::post('reviews/store', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+Route::put('reviews/{id}', [App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+Route::delete('reviews/{id}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+Route::get('reviews/product/{productId}', [App\Http\Controllers\ReviewController::class, 'getProductReviews'])->name('reviews.product');
+
+Route::post('cart/store', [App\Http\Controllers\CartController::class, 'store'])->name('cart.store');
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::get('/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('checkout');
+Route::delete('/cart/remove/{product_id}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+Route::get('/cart/items/count', [App\Http\Controllers\CartController::class, 'getCartItemCount'])->name('cart.items.count');
+Route::post('/cart/update/{product_id}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+Route::post('/cart/check-item', [App\Http\Controllers\CartController::class, 'checkCartItem'])->name('cart.checkItem');
+Route::get('/cart/debug-stock/{product_id}', [App\Http\Controllers\CartController::class, 'debugStock'])->name('cart.debugStock');
+Route::post('/cart/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
+
+Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('report/all', [App\Http\Controllers\HomeController::class, 're'])->name('report/all');
+
+Route::post('order/store', [App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
+Route::get('order/success', [App\Http\Controllers\OrderController::class, 'success'])->name('order/success');
+
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 // Customer Authentication Routes
 Route::get('customer/login', [App\Http\Controllers\Front\CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
@@ -48,13 +70,23 @@ Route::post('customer/register', [App\Http\Controllers\Front\CustomerAuthControl
 Route::post('customer/logout', [App\Http\Controllers\Front\CustomerAuthController::class, 'logout'])->name('customer.logout');
 
 // Customer Password Reset Routes
-Route::get('customer/password/reset', [App\Http\Controllers\Front\CustomerAuthController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('customer/password/email', [App\Http\Controllers\Front\CustomerAuthController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('customer/password/reset/{token}', [App\Http\Controllers\Front\CustomerAuthController::class, 'showResetForm'])->name('password.reset');
-Route::post('customer/password/reset', [App\Http\Controllers\Front\CustomerAuthController::class, 'reset'])->name('password.update');
+Route::get('customer/password/reset', [App\Http\Controllers\Front\CustomerAuthController::class, 'showLinkRequestForm'])->name('customer.password.request');
+Route::post('customer/password/email', [App\Http\Controllers\Front\CustomerAuthController::class, 'sendResetLinkEmail'])->name('customer.password.email');
+Route::get('customer/password/reset/{token}', [App\Http\Controllers\Front\CustomerAuthController::class, 'showResetForm'])->name('customer.password.reset');
+Route::post('customer/password/reset', [App\Http\Controllers\Front\CustomerAuthController::class, 'reset'])->name('customer.password.update');
 
 // Customer Wishlist Routes
+Route::prefix('customer')->name('customer.')->middleware('auth.customer')->group(function () {
+    Route::post('wishlist/toggle', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::get('wishlist/count', [App\Http\Controllers\WishlistController::class, 'getCount'])->name('wishlist.count');
+    Route::post('wishlist/check', [App\Http\Controllers\WishlistController::class, 'checkProduct'])->name('wishlist.check');
+    Route::get('wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+    Route::delete('wishlist/remove', [App\Http\Controllers\WishlistController::class, 'remove'])->name('wishlist.remove');
+});
 
+// Public Wishlist Routes (for non-authenticated users)
+Route::post('wishlist/toggle', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle.public');
+Route::post('wishlist/check', [App\Http\Controllers\WishlistController::class, 'checkProduct'])->name('wishlist.check.public');
 
 // Customer Dashboard Routes
 Route::middleware('auth.customer')->prefix('customer')->name('customer.')->group(function () {
