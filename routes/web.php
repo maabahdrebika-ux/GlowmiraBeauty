@@ -193,8 +193,9 @@ Route::namespace('Dashbord')->group(function ()
     Route::get('products/delete/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'destroy'])->name('products/delete');
     Route::post('products/edit/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'update'])->name('products/update');
     Route::get('products/gellary/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'gellary'])->name('products/gellary');
-    Route::get('products/deleteImage/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'deleteImage'])->name('products/deleteImage');
+    Route::delete('products/image/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'deleteImage'])->name('products.image.delete');
     Route::get('products/show/{id}', [App\Http\Controllers\Dashbord\ProductsController::class, 'show'])->name('products/show');
+ 
 
 
     Route::get('discounts', [App\Http\Controllers\Dashbord\DiscountController::class, 'index'])->name('discounts');

@@ -112,7 +112,7 @@
                             <div class="form-group col-md-12">
                                 <label class="control-label">{{ __('product.cover_image_label') }}</label>
                                 @if($product->image)
-                                    <img src="{{ asset('images/product/' . $product->image) }}" alt="{{ $product->name }}" class="img-thumbnail" width="200">
+                                    <img src="{{ asset('images/product/' . rawurlencode($product->image)) }}" alt="{{ $product->name }}" class="img-thumbnail" width="200">
                                 @else
                                     <p class="form-control-plaintext">{{ __('product.no_image_available') }}</p>
                                 @endif
@@ -127,7 +127,7 @@
                                 <div class="row">
                                     @foreach($product->imagesfiles as $image)
                                         <div class="col-md-3 mb-3">
-                                            <img src="{{ asset('images/product/' . $image->name) }}" alt="Additional Image" class="img-thumbnail" width="150">
+                                            <img src="{{ asset('images/product/' . rawurlencode($image->name)) }}" alt="Additional Image" class="img-thumbnail" width="150">
                                         </div>
                                     @endforeach
                                 </div>

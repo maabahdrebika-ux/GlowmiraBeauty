@@ -23,11 +23,11 @@
             <div class="row">
                 <div class="col-12 col-md-6">
                     <div class="product-detail__slide-two">
-                        <div class="product-detail__slide-two__big">
+                        <div class="product-detail__slide-two__big slick-slider">
                             {{-- Main product image first --}}
                             @if($product->image)
-                                <div class="slider__item active">
-                                    <img src="{{ asset('images/product/'.$product->image) }}" alt="{{ app()->getLocale() == 'ar' ? ($product->name ?? '') : ($product->namee ?? $product->name ?? '') }}"/>
+                                <div class="slider__item">
+                                    <img src="{{ asset('images/product/'.rawurlencode($product->image)) }}" alt="{{ app()->getLocale() == 'ar' ? ($product->name ?? '') : ($product->namee ?? $product->name ?? '') }}"/>
                                 </div>
                             @endif
                             
@@ -35,7 +35,7 @@
                             @if(isset($imagesfiles) && count($imagesfiles) > 0)
                                 @foreach($imagesfiles as $image)
                                     <div class="slider__item">
-                                        <img src="{{ asset('images/product/'.$image->name) }}" alt="{{ app()->getLocale() == 'ar' ? ($product->name ?? '') : ($product->namee ?? $product->name ?? '') }}"/>
+                                        <img src="{{ asset('images/product/'.rawurlencode($image->name)) }}" alt="{{ app()->getLocale() == 'ar' ? ($product->name ?? '') : ($product->namee ?? $product->name ?? '') }}"/>
                                     </div>
                                 @endforeach
                             @endif
@@ -47,11 +47,11 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="product-detail__slide-two__small">
+                        <div class="product-detail__slide-two__small slick-slider">
                             {{-- Main product image thumbnail first --}}
                             @if($product->image)
-                                <div class="slider__item active">
-                                    <img src="{{ asset('images/product/'.$product->image) }}" alt="Product thumbnail"/>
+                                <div class="slider__item">
+                                    <img src="{{ asset('images/product/'.rawurlencode($product->image)) }}" alt="Product thumbnail"/>
                                 </div>
                             @endif
                             
@@ -59,7 +59,7 @@
                             @if(isset($imagesfiles) && count($imagesfiles) > 0)
                                 @foreach($imagesfiles as $image)
                                     <div class="slider__item">
-                                        <img src="{{ asset('images/product/'.$image->name) }}" alt="Product thumbnail"/>
+                                        <img src="{{ asset('images/product/'.rawurlencode($image->name)) }}" alt="Product thumbnail"/>
                                     </div>
                                 @endforeach
                             @endif
@@ -357,7 +357,7 @@
                         <div class="product-thumb">
                             <a class="product-thumb__image" href="{{ route('product/info', encrypt($relatedProduct->id)) }}">
                                 @if($relatedProduct->image)
-                                    <img src="{{ asset($relatedProduct->image) }}" alt="{{ app()->getLocale() == 'ar' ? ($relatedProduct->name ?? '') : ($relatedProduct->namee ?? $relatedProduct->name ?? '') }}"/>
+                                    <img src="{{ asset('images/product/'.rawurlencode($relatedProduct->image)) }}" alt="{{ app()->getLocale() == 'ar' ? ($relatedProduct->name ?? '') : ($relatedProduct->namee ?? $relatedProduct->name ?? '') }}"/>
                                 @else
                                     <img src="{{ asset('images/product/default-product.jpg') }}" alt="Default product image"/>
                                 @endif
@@ -417,7 +417,12 @@
 @endif
 
 <script>
+// Ensure jQuery is loaded before initializing sliders
 document.addEventListener('DOMContentLoaded', function() {
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery is not loaded. Slick slider requires jQuery.');
+        return;
+    }
     // Tab functionality
     const tabSwitchers = document.querySelectorAll('.tab-switcher');
     const tabContents = document.querySelectorAll('.tab-content__item');
@@ -468,20 +473,76 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Product image carousel synchronization
-    const bigImageItems = document.querySelectorAll('.product-detail__slide-two__big .slider__item');
-    const smallImageItems = document.querySelectorAll('.product-detail__slide-two__small .slider__item');
+    // Initialize slick sliders with RTL support
+    const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
     
-    // Ensure main product image (first item) is active in both sections
-    if (bigImageItems.length > 0 && smallImageItems.length > 0) {
-        // Remove active class from all items
-        bigImageItems.forEach(item => item.classList.remove('active'));
-        smallImageItems.forEach(item => item.classList.remove('active'));
+    // Wait for images to load before initializing sliders
+    function initializeSliders() {
+        // Check if sliders already initialized
+        if ($('.product-detail__slide-two__big').hasClass('slick-initialized')) {
+            return;
+        }
         
-        // Add active class to first items (main product image)
-        bigImageItems[0].classList.add('active');
-        smallImageItems[0].classList.add('active');
+        // Initialize big image slider
+        $('.product-detail__slide-two__big').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            fade: true,
+            rtl: isRTL,
+            asNavFor: '.product-detail__slide-two__small',
+            adaptiveHeight: true
+        });
+        
+        // Initialize small (thumbnail) slider
+        $('.product-detail__slide-two__small').slick({
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            asNavFor: '.product-detail__slide-two__big',
+            dots: false,
+            centerMode: false,
+            focusOnSelect: true,
+            rtl: isRTL,
+            responsive: [
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2
+                    }
+                }
+            ],
+            // Fix for RTL direction
+            cssEase: 'ease-in-out',
+            speed: 300
+        });
+        
+        // Fix for RTL transform issue
+        if (isRTL) {
+            setTimeout(function() {
+                const slickTrack = document.querySelector('.product-detail__slide-two__small .slick-track');
+                if (slickTrack) {
+                    // Force reflow to fix RTL layout
+                    slickTrack.style.transform = 'translate3d(0px, 0px, 0px)';
+                    
+                    // Trigger resize event to recalculate positions
+                    $(window).trigger('resize');
+                }
+            }, 50);
+        }
     }
+    
+    // Initialize sliders when page is ready
+    initializeSliders();
+    
+    // Also initialize when images are loaded
+    $('img').on('load', function() {
+        initializeSliders();
+    });
+    
+    // Reinitialize on window resize
+    $(window).on('resize', function() {
+        initializeSliders();
+    });
 });
 
 // Simple notification function
@@ -788,6 +849,55 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
+}
+
+/* Slick slider custom styles for product detail */
+.product-detail__slide-two__big .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-detail__slide-two__big .slick-slide img {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+}
+
+.product-detail__slide-two__small .slick-slide {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.product-detail__slide-two__small .slick-slide img {
+    width: 100%;
+    height: auto;
+    border: 2px solid transparent;
+}
+
+.product-detail__slide-two__small .slick-slide.slick-current img {
+    border: 2px solid #aa6969;
+}
+
+/* RTL specific styles */
+body[dir="rtl"] .product-detail__slide-two__small .slick-slide {
+    float: right;
+}
+
+body[dir="rtl"] .product-detail__slide-two__small .slick-track {
+    transform: translate3d(0px, 0px, 0px);
+}
+
+/* Fix slick slider navigation arrows for RTL */
+body[dir="rtl"] .product-detail__slide-two__small .slick-prev {
+    left: auto;
+    right: 10px;
+}
+
+body[dir="rtl"] .product-detail__slide-two__small .slick-next {
+    right: auto;
+    left: 10px;
 }
 
 .add-to-cart .btn i {

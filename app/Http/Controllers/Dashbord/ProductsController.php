@@ -161,16 +161,21 @@ class ProductsController extends Controller
             ->with('image', $image);
     }
 
+  
+
     public function deleteImage($id)
-    {
-        $img_id = decrypt($id);
-        $image = Imagesfile::findOrFail($img_id);
-        if (file_exists(public_path('images/product/' . $image->name))) {
+{
+    $image = Imagesfile::findOrFail($id);
+
+   if (file_exists(public_path('images/product/' . $image->name))) {
             unlink(public_path('images/product/' . $image->name));
         }
-        $image->delete();
-        return redirect()->back()->with('success', trans('product.image_deleted_success'));
-    }
+
+    $image->delete();
+
+    return response()->json(['success' => true]);
+}
+
 
 
     /**

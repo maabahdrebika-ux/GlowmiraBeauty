@@ -595,6 +595,11 @@ class IndexController extends Controller
         $reviewCount = Review::getReviewCount($productId);
         $ratingDistribution = Review::getRatingDistribution($productId);
         
+        // Debug: Log the product image path
+        \Illuminate\Support\Facades\Log::info('Product image path: ' . ($product->image ?? 'No image'));
+        \Illuminate\Support\Facades\Log::info('Current locale: ' . app()->getLocale());
+        \Illuminate\Support\Facades\Log::info('Asset URL: ' . asset('images/product/' . ($product->image ?? 'default.jpg')));
+        
         return view('front.product-detail')
             ->with('products', $products)
             ->with('colors', $colors)

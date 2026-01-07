@@ -52,7 +52,7 @@
                             <div class="product-thumb">
                               <a class="product-thumb__image" href="{{ route('product/info', encrypt($product->id)) }}">
                                 @if($product->image)
-                                  <img src="{{ asset('images/product/' . $product->image) }}" alt="Product image"/>
+                                  <img src="{{ asset('images/product/' . rawurlencode($product->image)) }}" alt="Product image"/>
                                 @else
                                   <img src="{{ asset('app/assets/images/product/1.png') }}" alt="Product image"/>
                                 @endif
@@ -63,7 +63,7 @@
                                         <i class="fas fa-shopping-bag"></i>
                                     </button>
                                 </div>
-                                <div class="product-btn"><a class="btn -white product__actions__item -round product-qv" href="#" data-product-id="{{ $product->id }}" data-product-name="{{ app()->getLocale() == 'en' ? ($product->namee ?? $product->name) : $product->name }}" data-product-category="{{ app()->getLocale() == 'en' ? ($product->categories->englishname ?? $product->categories->name ?? 'Category') : ($product->categories->name ?? 'Category') }}" data-product-price="{{ $product->price }}" data-product-image="{{ $product->image ? asset('images/product/' . $product->image) : asset('app/assets/images/product/1.png') }}"><i class="fas fa-eye"></i></a>
+                                <div class="product-btn"><a class="btn -white product__actions__item -round product-qv" href="#" data-product-id="{{ $product->id }}" data-product-name="{{ app()->getLocale() == 'en' ? ($product->namee ?? $product->name) : $product->name }}" data-product-category="{{ app()->getLocale() == 'en' ? ($product->categories->englishname ?? $product->categories->name ?? 'Category') : ($product->categories->name ?? 'Category') }}" data-product-price="{{ $product->price }}" data-product-image="{{ $product->image ? asset('images/product/' . rawurlencode($product->image)) : asset('app/assets/images/product/1.png') }}"><i class="fas fa-eye"></i></a>
                                 </div>
                                 <div class="product-btn"><a class="btn -white product__actions__item -round" href="#"><i class="fas fa-heart"></i></a>
                                 </div>

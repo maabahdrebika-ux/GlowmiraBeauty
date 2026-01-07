@@ -44,7 +44,7 @@
                                     <td>
                                         <div class="cart-product">
                                             <div class="cart-product__image">
-                                                <img src="{{ $item['product_image'] ? asset('images/product/'.$item['product_image']) : asset('images/product/default.png') }}" 
+                                                <img src="{{ $item['product_image'] ? asset('images/product/'.rawurlencode($item['product_image'])) : asset('images/product/default.png') }}"
                                                      alt="@if(app()->getLocale() == 'ar'){{ $item['product_name'] }}@else{{ $item['product_namee'] ?? $item['product_name'] }}@endif"/>
                                             </div>
                                             <div class="cart-product__content">
