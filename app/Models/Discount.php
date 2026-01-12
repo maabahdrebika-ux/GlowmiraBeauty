@@ -16,6 +16,8 @@ class Discount extends Model
         
     ];
 
+    public $timestamps = false;
+
     protected $casts = [
         'percentage' => 'integer',
       

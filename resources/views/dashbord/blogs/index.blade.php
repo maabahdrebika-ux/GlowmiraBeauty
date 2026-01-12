@@ -55,6 +55,7 @@ $(document).ready(function() {
     if ($.fn.DataTable.isDataTable('#datatable-buttons')) {
         $('#datatable-buttons').DataTable().destroy();
     }
+    
     $('#datatable-buttons').DataTable({
         @if(App::getLocale() == 'ar')
         "language": {

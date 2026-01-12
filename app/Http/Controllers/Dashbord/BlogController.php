@@ -58,13 +58,14 @@ class BlogController extends Controller
         })
 
         ->addColumn('status', function ($blog) {
-            return $blog->active ? "مفعلة" : "معطلة";
+            return $blog->active ? trans('blog.active') : trans('blog.inactive');
         })
 
         ->addColumn('change_status', function ($blog) {
             $blog_id = encrypt($blog->id);
+            $csrf_token = csrf_token();
             return '<form action="' . route('blogs.changeStatus', $blog_id) . '" method="POST" style="display: inline;">
-                @csrf
+                <input type="hidden" name="_token" value="' . $csrf_token . '">
                 <button type="submit" style="background: none;border:none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-label="Refresh icon">
                       <g fill="none" stroke="#C5979A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -262,6 +263,9 @@ class BlogController extends Controller
         $blog = Blog::find($blog_id);
 
         if (!$blog) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => trans('blog.notfound')], 404);
+            }
             Alert::warning(trans('blog.notfound'));
             return redirect('blogs');
         }
@@ -275,11 +279,17 @@ class BlogController extends Controller
             });
 
             // Log the activity and show a success alert
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'message' => trans('blog.changestatuesalert')]);
+            }
             Alert::success(trans('blog.changestatuesalert'));
 
             return redirect()->back();
         } catch (\Exception $e) {
             // Handle exceptions gracefully
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
             Alert::warning($e->getMessage());
 
             return redirect()->back();

@@ -39,6 +39,8 @@ return [
     'delete_success' => 'Blog deleted successfully.',
     'notfound' => 'Blog not found.',
     'changestatuesalert' => 'Blog status changed successfully.',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
 
     'popular_posts' => 'Popular Posts',
     'recently_added' => 'Recently Added',

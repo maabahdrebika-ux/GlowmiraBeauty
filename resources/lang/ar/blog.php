@@ -38,6 +38,8 @@ return [
     'delete_success' => 'تم حذف المدونة بنجاح.',
     'notfound' => 'المدونة غير موجودة.',
     'changestatuesalert' => 'تم تغيير حالة المدونة بنجاح.',
+    'active' => 'مفعلة',
+    'inactive' => 'معطلة',
 
     'popular_posts' => 'المشاركات الشائعة',
     'recently_added' => 'تمت الإضافة مؤخرًا',
