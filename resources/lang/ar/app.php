@@ -258,7 +258,7 @@ return [
     'browse_all_products_message' => 'تصفح جميع منتجاتنا للعثور على ما تحتاجه',
     'error_loading_recommendations' => 'خطأ في تحميل التوصيات',
     'try_again' => 'حاول مرة أخرى',
-    'error_processing_request' => 'خطأ في معالجة طلبك',
+    'error_processing_request' => 'ابحث عن وصف اخر لايوجد منتج مماثل',
     'sale' => 'خصم'
 
 ];
