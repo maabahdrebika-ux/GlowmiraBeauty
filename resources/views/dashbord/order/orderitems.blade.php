@@ -201,6 +201,33 @@
                             </button>
                         </form>
                     @endif
+
+                    @if($order->orderstatues->id == 3)
+                        <div class="mt-4 text-center">
+                            @php
+                                $customerPhone = $order->customer ? $order->customer->phone : $order->phonenumber;
+                                if ($customerPhone) {
+                                    if (str_starts_with($customerPhone, '+')) {
+                                        $formattedPhone = $customerPhone;
+                                    } elseif (str_starts_with($customerPhone, '0')) {
+                                        $formattedPhone = '+218' . substr($customerPhone, 1);
+                                    } else {
+                                        $formattedPhone = '+218' . $customerPhone;
+                                    }
+                                    $customerName = $order->customer ? $order->customer->name : $order->full_name;
+                                    $message = urlencode("مرحبا " . $customerName . "، تم تسليم طلبكم رقم " . $order->ordersnumber . " بنجاح. شكرا لكم.");
+                                    $link = "https://wa.me/" . $formattedPhone . "?text=" . $message;
+                                }
+                            @endphp
+                            @if(isset($link))
+                                <a href="{{ $link }}" target="_blank" class="btn btn-success btn-lg">
+                                    <i class="fab fa-whatsapp"></i> إرسال واتساب للعميل
+                                </a>
+                            @else
+                                <span class="text-muted">لا يوجد رقم هاتف للعميل</span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
