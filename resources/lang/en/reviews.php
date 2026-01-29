@@ -120,5 +120,19 @@ return [
     'change_status' => 'Change Status',
     'copy' => 'Copy',
     'export_to_excel' => 'Export to Excel',
-    'columns' => 'Columns'
+    'columns' => 'Columns',
+    
+    // Review Management (Customer Frontend)
+    'edit_review' => 'Edit Review',
+    'delete_review' => 'Delete Review',
+    'confirm_delete_review' => 'Are you sure you want to delete this review? This action cannot be undone.',
+    'review_updated_success' => 'Review updated successfully.',
+    'review_deleted_success' => 'Review deleted successfully.',
+    'error_updating_review' => 'An error occurred while updating the review',
+    'error_deleting_review' => 'An error occurred while deleting the review',
+    'cancel' => 'Cancel',
+    'save' => 'Save',
+    'delete' => 'Delete',
+    
+    'submit_reply' => 'Submit Reply',
 ];

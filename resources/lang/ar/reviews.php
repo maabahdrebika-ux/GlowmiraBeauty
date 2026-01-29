@@ -120,5 +120,18 @@ return [
     'change_status' => 'تغيير الحالة',
     'copy' => 'نسخ',
     'export_to_excel' => 'تصدير إلى إكسل',
-    'columns' => 'أعمدة'
+    'columns' => 'أعمدة',
+    
+    // Review Management (Customer Frontend)
+    'edit_review' => 'تعديل التقييم',
+    'delete_review' => 'حذف التقييم',
+    'confirm_delete_review' => 'هل أنت متأكد من حذف هذا التقييم؟ لا يمكن التراجع عن هذا الإجراء.',
+    'review_updated_success' => 'تم تحديث التقييم بنجاح.',
+    'review_deleted_success' => 'تم حذف التقييم بنجاح.',
+    'error_updating_review' => 'حدث خطأ أثناء تحديث التقييم',
+    'error_deleting_review' => 'حدث خطأ أثناء حذف التقييم',
+    'cancel' => 'إلغاء',
+    'save' => 'حفظ',
+    'delete' => 'حذف',
+    'submit_reply'
 ];

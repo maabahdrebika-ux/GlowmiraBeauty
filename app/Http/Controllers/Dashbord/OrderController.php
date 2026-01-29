@@ -288,15 +288,30 @@ class OrderController extends Controller
             })
             ->addColumn('orderinfo', function ($Order) {
                 $Orderid = encrypt($Order->id);
+                $customerPhone = $Order->customer_phone ?? $Order->phonenumber;
+                $whatsappBtn = '';
+                if ($customerPhone) {
+                    if (str_starts_with($customerPhone, '+')) {
+                        $formattedPhone = $customerPhone;
+                    } elseif (str_starts_with($customerPhone, '0')) {
+                        $formattedPhone = '+218' . substr($customerPhone, 1);
+                    } else {
+                        $formattedPhone = '+218' . $customerPhone;
+                    }
+                    $customerName = $Order->customer_name ?? $Order->full_name;
+                    $message = urlencode("مرحبا " . $customerName . "، تم تسليم طلبكم رقم " . $Order->ordersnumber . " بنجاح. شكرا لكم.");
+                    $link = "https://wa.me/" . $formattedPhone . "?text=" . $message;
+                    $whatsappBtn = ' <a href="' . $link . '" target="_blank" title="إرسال واتساب" class="btn btn-success btn-sm ml-1"><i class="fab fa-whatsapp"></i></a>';
+                }
 
-                return '<a  href="' . route('orderitem', $Orderid) . '"> <svg xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 24 24" width="24" height="24" 
-                fill="#aa6969">
-                <path d="M3 6h18v2H3V6zm0 4h18v2H3v-2zm0 4h12v2H3v-2zm0 4h12v2H3v-2z"/>
-                <circle cx="19" cy="16" r="3"/>
-           </svg></a>';
+                return '<a href="' . route('orderitem', $Orderid) . '" title="تفاصيل الطلب">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#aa6969">
+                        <path d="M3 6h18v2H3V6zm0 4h18v2H3v-2zm0 4h12v2H3v-2zm0 4h12v2H3v-2z"/>
+                        <circle cx="19" cy="16" r="3"/>
+                    </svg>
+                </a>' . $whatsappBtn;
             })
-            ->rawColumns(['orderinfo',])
+            ->rawColumns(['orderinfo'])
             ->make(true);
     }
     public function cancelindex()
@@ -527,7 +542,7 @@ class OrderController extends Controller
             });
             Alert::success(trans('order.updated'), trans('order.make_complete'));
 
-            return redirect()->back()->with('success', trans('order.make_complete'));
+            return redirect()->route('orderitem', $id)->with('success', trans('order.make_complete'));
         } catch (\Exception $e) {
 
             Alert::error('حدث خطأ أثناء معالجة الطلبية' . $e->getMessage());

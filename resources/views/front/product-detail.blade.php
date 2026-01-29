@@ -95,7 +95,7 @@
                             </div>
                             <p>{{ $reviewCount }} {{ __('products.reviews_count') ?? 'reviews' }}</p>
                             @auth('customer')
-                                <a href="#reviews-section">{{ __('products.write_review') ?? 'Write a review' }}</a>
+                                <a href="#reviews-section" onclick="openReviewSwal({{ $product->id }}); return false;">{{ __('products.write_review') ?? 'Write a review' }}</a>
                             @else
                                 <a href="{{ route('customer.login') }}">{{ __('products.login_to_review') ?? 'Login to write a review' }}</a>
                             @endauth
@@ -131,6 +131,29 @@
                                         {{ $product->is_available ? __('products.available_text') : __('products.unavailable_text') }}
                                     </span>
                                 </li>
+                                @php
+                                    $totalStock = $product->stocks->sum('quantty');
+                                @endphp
+                                @if($totalStock <= 0)
+                                    <li style="color: #f11; font-weight: bold;">
+                                        <i class="fas fa-times-circle"></i>
+                                        {{ app()->getLocale() == 'ar' ? 'نفذت الكمية' : 'Out of Stock' }}
+                                    </li>
+                                @elseif($totalStock <= 2)
+                                    <li style="color: #ff416c; font-weight: bold; font-size: 1.1em;">
+                                        <i class="fas fa-fire"></i>
+                                        {{ app()->getLocale() == 'ar' 
+                                            ? 'حرج! المتبقى فقط ' . $totalStock . ' قطعة!' 
+                                            : 'Hurry! Only ' . $totalStock . ' left!' }}
+                                    </li>
+                                @elseif($totalStock <= 4)
+                                    <li style="color: #f7971e; font-weight: bold;">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ app()->getLocale() == 'ar' 
+                                            ? 'المتبقى فقط ' . $totalStock . ' قطعة!' 
+                                            : 'Only ' . $totalStock . ' left!' }}
+                                    </li>
+                                @endif
                                 @if(app()->getLocale() == 'ar' && $product->country_of_origin_ar)
                                     <li>{{ __('products.country_of_origin') ?? 'Country of Origin' }}: {{ $product->country_of_origin_ar }}</li>
                                 @elseif(app()->getLocale() == 'en' && $product->country_of_origin_en)
@@ -182,90 +205,202 @@
                             
                             <div class="divider"></div>
                             
-                            <div class="product-detail__content__tab">
-                                <ul class="tab-content__header">
-                                    <li class="tab-switcher active" data-tab-index="0" tabindex="0">{{ __('products.description') ?? 'Description' }}</li>
-                                    <li class="tab-switcher" data-tab-index="2" tabindex="0">{{ __('products.reviews') ?? 'Reviews' }} ({{ $reviewCount }})</li>
-                                </ul>
-                                <div id="allTabsContainer">
-                                    <div class="tab-content__item -description" data-tab-index="0">
-                                        <p>{{ app()->getLocale() == 'ar' 
-                                            ? ($product->description_ar ?? $product->description ?? __('products.no_description_available')) 
-                                            : ($product->description_en ?? $product->description ?? __('products.no_description_available')) }}</p>
-                                    </div>
-                                  
-                                    <div class="tab-content__item -review" data-tab-index="2" style="display:none;" id="reviews-section">
-                                        @if($reviews && count($reviews) > 0)
-                                            <div class="reviews-summary">
-                                                <h5>{{ __('products.customer_reviews') ?? 'Customer Reviews' }}</h5>
-                                                <div class="row">
-                                                    <div class="col-12 col-md-4">
-                                                        <div class="overall-rating">
-                                                            <h2>{{ $averageRating }}</h2>
-                                                            <div class="rate">
-                                                                @for($i = 1; $i <= 5; $i++)
-                                                                    @if($i <= round($averageRating))
-                                                                        <i class="fas fa-star"></i>
-                                                                    @else
-                                                                        <i class="far fa-star"></i>
-                                                                    @endif
-                                                                @endfor
-                                                            </div>
-                                                            <p>{{ $reviewCount }} {{ __('products.total_reviews') ?? 'total reviews' }}</p>
-                                                        </div>
+                            <div class="product-detail__content__description">
+                                <h5>{{ __('products.description') ?? 'Description' }}</h5>
+                                <p>{{ app()->getLocale() == 'ar' 
+                                    ? ($product->description_ar ?? $product->description ?? __('products.no_description_available')) 
+                                    : ($product->description_en ?? $product->description ?? __('products.no_description_available')) }}</p>
+                            </div>
+                            
+                            <div class="divider"></div>
+                            
+                            <!-- Reviews Section -->
+                            <div class="product-detail__content__reviews" id="reviews-section">
+                                <h5>{{ __('reviews.customer_reviews') }} ({{ $reviewCount }})</h5>
+                                
+                                @if($reviews && count($reviews) > 0)
+                                    <div class="reviews-summary">
+                                        <div class="row">
+                                            <div class="col-12 col-md-4">
+                                                <div class="overall-rating">
+                                                    <h2>{{ $averageRating }}</h2>
+                                                    <div class="rate">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <= round($averageRating))
+                                                                <i class="fas fa-star"></i>
+                                                            @else
+                                                                <i class="far fa-star"></i>
+                                                            @endif
+                                                        @endfor
                                                     </div>
-                                                    <div class="col-12 col-md-8">
-                                                        <div class="rating-breakdown">
-                                                            @for($rating = 5; $rating >= 1; $rating--)
-                                                                <div class="rating-bar">
-                                                                    <span>{{ $rating }} {{ __('products.star') ?? 'star' }}</span>
-                                                                    <div class="progress-bar">
-                                                                        @php
-                                                                            $percentage = $reviewCount > 0 ? ($ratingDistribution[$rating] / $reviewCount) * 100 : 0;
-                                                                        @endphp
-                                                                        <div class="progress-fill" style="width: {{ $percentage }}%"></div>
-                                                                    </div>
-                                                                    <span>{{ $ratingDistribution[$rating] }}</span>
-                                                                </div>
+                                                    <p>{{ $reviewCount }} {{ __('products.total_reviews') ?? 'total reviews' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-8">
+                                                <div class="rating-breakdown">
+                                                    @for($rating = 5; $rating >= 1; $rating--)
+                                                        <div class="rating-bar">
+                                                            <span>{{ $rating }} {{ __('products.star') ?? 'star' }}</span>
+                                                            <div class="progress-bar">
+                                                                @php
+                                                                    $percentage = $reviewCount > 0 ? ($ratingDistribution[$rating] / $reviewCount) * 100 : 0;
+                                                                @endphp
+                                                                <div class="progress-fill" style="width: {{ $percentage }}%"></div>
+                                                            </div>
+                                                            <span>{{ $ratingDistribution[$rating] }}</span>
+                                                        </div>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                @endif
+
+                                <div class="reviews-list">
+                                    @forelse($reviews as $review)
+                                        <div class="review" id="review-{{ $review->id }}">
+                                            <div class="review__header">
+                                                <div class="review__header__avatar">
+                                                    <img src="https://via.placeholder.com/60x60/4a90e2/ffffff?text={{ strtoupper(substr($review->customer->name ?? 'U', 0, 1)) }}" alt="{{ $review->customer->name ?? __('reviews.anonymous') }}"/>
+                                                </div>
+                                                <div class="review__header__info">
+                                                    <h5>{{ $review->customer->name ?? __('reviews.anonymous') }}</h5>
+                                                    <p>{{ $review->created_at->format('M d, Y') }}</p>
+                                                    @if($review->is_verified_purchase)
+                                                        <span class="verified-badge">{{ __('reviews.verified_purchase') }}</span>
+                                                    @endif
+                                                </div>
+                                                <div class="review__header__rate">
+                                                    <div class="rate">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <= $review->rating)
+                                                                <i class="fas fa-star"></i>
+                                                            @else
+                                                                <i class="far fa-star"></i>
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                    @auth('customer')
+                                                        @if(Auth::guard('customer')->id() == $review->customer_id)
+                                                            <div class="review-actions">
+                                                                <button class="btn-edit-review" onclick="toggleEditForm({{ $review->id }})">
+                                                                    <i class="fas fa-edit"></i> {{ __('reviews.edit_review') }}
+                                                                </button>
+                                                                <button class="btn-delete-review" onclick="confirmDeleteReview({{ $review->id }})">
+                                                                    <i class="fas fa-trash"></i> {{ __('reviews.delete_review') }}
+                                                                </button>
+                                                            </div>
+                                                        @endif
+                                                    @endauth
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Review Content (display mode) -->
+                                            <div id="review-content-{{ $review->id }}">
+                                                <p class="review__content">{{ $review->comment }}</p>
+                                            </div>
+                                            
+                                            <!-- Edit Form (hidden by default) -->
+                                            <div id="review-edit-form-{{ $review->id }}" style="display: none;">
+                                                <form action="{{ route('reviews.update', $review->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    
+                                                    <div class="form-group">
+                                                        <label>{{ __('products.your_rating') }} <span class="text-danger">*</span></label>
+                                                        <div class="rating-input">
+                                                            @for($i = 5; $i >= 1; $i--)
+                                                                <input type="radio" id="edit-rating-{{ $review->id }}-{{ $i }}" name="rating" value="{{ $i }}" {{ $review->rating == $i ? 'checked' : '' }} required>
+                                                                <label for="edit-rating-{{ $review->id }}-{{ $i }}">
+                                                                    <i class="fas fa-star"></i>
+                                                                </label>
                                                             @endfor
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        @endif
-
-                                        <div class="reviews-list">
-                                            @forelse($reviews as $review)
-                                                <div class="review">
-                                                    <div class="review__header">
-                                                        <div class="review__header__avatar">
-                                                            <img src="https://via.placeholder.com/60x60/4a90e2/ffffff?text={{ strtoupper(substr($review->customer->name ?? 'U', 0, 1)) }}" alt="{{ $review->customer->name ?? 'User' }}"/>
-                                                        </div>
-                                                        <div class="review__header__info">
-                                                            <h5>{{ $review->customer->name ?? __('products.anonymous') }}</h5>
-                                                            <p>{{ $review->created_at->format('M d, Y') }}</p>
-                                                            @if($review->is_verified_purchase)
-                                                                <span class="verified-badge">{{ __('products.verified_purchase') ?? 'Verified Purchase' }}</span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="review__header__rate">
-                                                            <div class="rate">
-                                                                @for($i = 1; $i <= 5; $i++)
-                                                                    @if($i <= $review->rating)
-                                                                        <i class="fas fa-star"></i>
-                                                                    @else
-                                                                        <i class="far fa-star"></i>
-                                                                    @endif
-                                                                @endfor
-                                                            </div>
-                                                        </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label>{{ __('products.your_review') }} <span class="text-danger">*</span></label>
+                                                        <textarea name="comment" class="form-control" rows="4" required>{{ $review->comment }}</textarea>
                                                     </div>
-                                                    <p class="review__content">{{ $review->comment }}</p>
+                                                    
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn -dark btn-sm">
+                                                            <i class="fas fa-save"></i> {{ __('products.save') ?? 'Save' }}
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm({{ $review->id }})">
+                                                            {{ __('products.cancel') ?? 'Cancel' }}
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            
+                                            <!-- Delete Form (hidden, used for confirmation) -->
+                                            <form id="delete-form-{{ $review->id }}" action="{{ route('reviews.destroy', $review->id) }}" method="POST" style="display: none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                                    
+                                                    <!-- Reply Section -->
+                                                    @if($review->replies && count($review->replies) > 0)
+                                                        <div class="review-replies">
+                                                            @foreach($review->replies as $reply)
+                                                                <div class="reply">
+                                                                    <div class="reply__header">
+                                                                        @if($reply->isFromAdmin())
+                                                                            <div class="reply__header__avatar admin">
+                                                                                <img src="https://via.placeholder.com/40x40/28a745/ffffff?text=A" alt="Admin"/>
+                                                                            </div>
+                                                                            <div class="reply__header__info">
+                                                                                <h6>{{ __('products.admin') ?? 'Store Manager' }}</h6>
+                                                                                <p>{{ $reply->created_at->format('M d, Y') }}</p>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="reply__header__avatar">
+                                                                                <img src="https://via.placeholder.com/40x40/6c757d/ffffff?text={{ strtoupper(substr($reply->customer->name ?? 'U', 0, 1)) }}" alt="{{ $reply->customer->name ?? 'User' }}"/>
+                                                                            </div>
+                                                                            <div class="reply__header__info">
+                                                                                <h6>{{ $reply->customer->name ?? __('products.anonymous') }}</h6>
+                                                                                <p>{{ $reply->created_at->format('M d, Y') }}</p>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                    <p class="reply__content">{{ $reply->comment }}</p>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                    
+                                                    <!-- Reply Form -->
+                                                    @auth('customer')
+                                                        <div class="reply-form-container">
+                                                            <button class="btn-reply-toggle" onclick="toggleReplyForm({{ $review->id }})">
+                                                                <i class="fas fa-reply"></i> {{ trans('products.reply') ?? 'Reply' }}
+                                                            </button>
+                                                            <form action="{{ route('reviews.reply.store') }}" method="POST" id="reply-form-{{ $review->id }}" class="reply-form" style="display: none;">
+                                                                @csrf
+                                                                <input type="hidden" name="review_id" value="{{ $review->id }}">
+                                                                <div class="form-group">
+                                                                    <textarea name="comment" class="form-control" rows="3" 
+                                                                              placeholder="{{trans('products.enter_your_reply') ?? 'Write your reply...' }}" 
+                                                                              required></textarea>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button type="submit" class="btn -dark btn-sm">
+                                                                        <i class="fas fa-paper-plane"></i> {{ trans('reviews.submit_reply') }}
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleReplyForm({{ $review->id }})">
+                                                                        {{ trans('reviews.cancel') }}
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    @endauth
                                                 </div>
                                             @empty
                                                 <div class="no-reviews">
-                                                    <p>{{ __('products.no_reviews_yet') ?? 'No reviews yet. Be the first to review this product!' }}</p>
+                                                    <p>{{ __('reviews.no_reviews_yet') }}</p>
                                                 </div>
                                             @endforelse
                                         </div>
@@ -279,13 +414,13 @@
                                         @auth('customer')
                                             <hr>
                                             <div class="review-form-section">
-                                                <h5>{{ __('products.write_review') ?? 'Write a review' }}</h5>
+                                                <h5>{{ __('reviews.write_review') }}</h5>
                                                 <form action="{{ route('reviews.store') }}" method="POST" id="review-form">
                                                     @csrf
                                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                     
                                                     <div class="form-group">
-                                                        <label>{{ __('products.your_rating') ?? 'Your Rating' }} <span class="text-danger">*</span></label>
+                                                        <label>{{ __('reviews.your_rating') }} <span class="text-danger">*</span></label>
                                                         <div class="rating-input">
                                                             @for($i = 5; $i >= 1; $i--)
                                                                 <input type="radio" id="rating-{{ $i }}" name="rating" value="{{ $i }}" required>
@@ -300,9 +435,9 @@
                                                     </div>
                                                     
                                                     <div class="form-group">
-                                                        <label>{{ __('products.your_review') ?? 'Your Review' }} <span class="text-danger">*</span></label>
+                                                        <label>{{ __('reviews.your_review') }} <span class="text-danger">*</span></label>
                                                         <textarea name="comment" class="form-control" rows="5" 
-                                                                  placeholder="{{ __('products.enter_your_review') ?? 'Share your thoughts about this product...' }}" 
+                                                                  placeholder="{{ __('reviews.enter_your_review') }}" 
                                                                   required>{{ old('comment') }}</textarea>
                                                         @error('comment')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -312,7 +447,7 @@
                                                     <div class="form-group">
                                                         <button type="submit" class="btn -dark">
                                                             <i class="fas fa-paper-plane"></i>
-                                                            {{ __('products.submit_review') ?? 'Submit Review' }}
+                                                            {{ __('reviews.submit_review') }}
                                                         </button>
                                                     </div>
                                                 </form>
@@ -320,9 +455,9 @@
                                         @else
                                             <hr>
                                             <div class="login-prompt">
-                                                <p>{{ __('products.login_to_write_review') ?? 'Please login to write a review' }}</p>
+                                                <p>{{ __('reviews.login_to_write_review') }}</p>
                                                 <a href="{{ route('customer.login') }}" class="btn -dark">
-                                                    {{ __('products.login') ?? 'Login' }}
+                                                    {{ __('reviews.login') }}
                                                 </a>
                                             </div>
                                         @endauth
@@ -338,7 +473,7 @@
 </div>
 
 @if($products && count($products) > 0)
-<div class="product-slide">
+<div class="product-slide" style="direction: ltr;">
     <div class="container">
         <div class="section-title -center" style="margin-bottom: 1.875em">
             <h2>{{ __('products.related_products') }}</h2>
@@ -423,6 +558,22 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('jQuery is not loaded. Slick slider requires jQuery.');
         return;
     }
+    
+    // Handle hash in URL for reviews section
+    if (window.location.hash === '#reviews-section') {
+        setTimeout(() => {
+            const reviewsTab = document.querySelector('.tab-switcher[data-tab-index="2"]');
+            if (reviewsTab) {
+                reviewsTab.click();
+            }
+            // Scroll to reviews section
+            const reviewsSection = document.querySelector('#reviews-section');
+            if (reviewsSection) {
+                reviewsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+    
     // Tab functionality
     const tabSwitchers = document.querySelectorAll('.tab-switcher');
     const tabContents = document.querySelectorAll('.tab-content__item');
@@ -838,6 +989,197 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Toggle reply form
+function toggleReplyForm(reviewId) {
+    const form = document.getElementById('reply-form-' + reviewId);
+    const btn = document.querySelector('.btn-reply-toggle');
+    
+    if (form) {
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            if (btn) btn.style.display = 'none';
+        } else {
+            form.style.display = 'none';
+            if (btn) btn.style.display = 'inline-flex';
+        }
+    }
+}
+
+// Toggle edit form for reviews
+function toggleEditForm(reviewId) {
+    const contentDiv = document.getElementById('review-content-' + reviewId);
+    const formDiv = document.getElementById('review-edit-form-' + reviewId);
+    
+    if (contentDiv && formDiv) {
+        if (formDiv.style.display === 'none') {
+            // Show edit form, hide content
+            formDiv.style.display = 'block';
+            contentDiv.style.display = 'none';
+        } else {
+            // Show content, hide edit form
+            formDiv.style.display = 'none';
+            contentDiv.style.display = 'block';
+        }
+    }
+}
+
+// Confirm delete review - SweetAlert popup with fallback
+function confirmDeleteReview(reviewId) {
+    // Check if SweetAlert2 is loaded
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: '{{ __("reviews.confirm_delete_review") }}',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '{{ __("reviews.delete") }}',
+            cancelButtonText: '{{ __("reviews.cancel") }}'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('delete-form-' + reviewId);
+                if (form) {
+                    form.submit();
+                }
+            }
+        });
+    } else {
+        // Fallback to browser confirm dialog
+        if (confirm('{{ __("reviews.confirm_delete_review") }}')) {
+            const form = document.getElementById('delete-form-' + reviewId);
+            if (form) {
+                form.submit();
+            }
+        }
+    }
+}
+
+// Switch to reviews tab
+function switchToReviewsTab() {
+    const reviewsTab = document.querySelector('.tab-switcher[data-tab-index="2"]');
+    if (reviewsTab) {
+        reviewsTab.click();
+    }
+}
+
+// Open SweetAlert for writing a review
+function openReviewSwal(productId) {
+    // Check if SweetAlert2 is loaded
+    if (typeof Swal === 'undefined') {
+        // Fallback: switch to reviews tab
+        switchToReviewsTab();
+        setTimeout(() => {
+            const reviewForm = document.querySelector('.review-form-section form');
+            if (reviewForm) {
+                reviewForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 300);
+        return;
+    }
+    
+    // Generate star rating HTML dynamically
+    let starsHtml = '';
+    for (let i = 5; i >= 1; i--) {
+        starsHtml += `
+            <input type="radio" id="swal-rating-${i}" name="rating" value="${i}" required>
+            <label for="swal-rating-${i}" class="swal-star" data-rating="${i}">
+                <i class="fas fa-star"></i>
+            </label>
+        `;
+    }
+    
+    Swal.fire({
+        title: '{{ __("reviews.write_review") }}',
+        html: `
+            <form id="swal-review-form" action="{{ route('reviews.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="product_id" value="${productId}">
+                
+                <div class="swal-rating-container">
+                    <label>{{ __('reviews.your_rating') }} <span class="text-danger">*</span></label>
+                    <div class="swal-rating-input">
+                        ${starsHtml}
+                    </div>
+                    <div class="swal-rating-error" style="color: #dc3545; font-size: 12px; display: none; margin-top: 5px;">
+                        {{ __('reviews.rating_required') }}
+                    </div>
+                </div>
+                
+                <div class="swal-form-group">
+                    <label>{{ __('reviews.your_review') }} <span class="text-danger">*</span></label>
+                    <textarea name="comment" class="swal-textarea" rows="4" 
+                              placeholder="{{ __('reviews.enter_your_review') }}" required></textarea>
+                </div>
+            </form>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '{{ __('reviews.submit_review') }}',
+        cancelButtonText: '{{ __('reviews.cancel') }}',
+        focusConfirm: false,
+        didOpen: () => {
+            // Initialize star rating for SweetAlert
+            const starLabels = document.querySelectorAll('.swal-star');
+            
+            // Hover effect
+            starLabels.forEach((label) => {
+                label.addEventListener('mouseover', function() {
+                    const rating = this.getAttribute('data-rating');
+                    updateSwalStars(rating);
+                });
+                
+                label.addEventListener('mouseout', function() {
+                    const selectedRating = document.querySelector('.swal-rating-input input:checked')?.value || 0;
+                    updateSwalStars(selectedRating);
+                });
+                
+                label.addEventListener('click', function() {
+                    document.querySelector('.swal-rating-error').style.display = 'none';
+                });
+            });
+            
+            function updateSwalStars(rating) {
+                starLabels.forEach((label) => {
+                    const starValue = parseInt(label.getAttribute('data-rating'));
+                    if (starValue <= rating) {
+                        label.querySelector('i').style.color = '#ffc107';
+                    } else {
+                        label.querySelector('i').style.color = '#ddd';
+                    }
+                });
+            }
+            
+            // Initialize with no stars selected
+            updateSwalStars(0);
+        },
+        preConfirm: () => {
+            const rating = document.querySelector('.swal-rating-input input:checked')?.value;
+            const comment = document.querySelector('.swal-textarea').value;
+            
+            if (!rating) {
+                document.querySelector('.swal-rating-error').style.display = 'block';
+                return false;
+            }
+            
+            if (comment.length < 10) {
+                Swal.showValidationMessage('{{ __("reviews.comment_min_length") }}');
+                return false;
+            }
+            
+            return {
+                rating: rating,
+                comment: comment
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.getElementById('swal-review-form');
+            if (form) {
+                form.submit();
+            }
+        }
+    });
+}
 </script>
 
 <style>
@@ -1023,6 +1365,63 @@ body[dir="rtl"] .product-detail__slide-two__small .slick-next {
     text-align: center;
 }
 
+.pagination-wrapper .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pagination-wrapper .page-item {
+    flex: 0 0 auto;
+    margin: 0 2px;
+}
+
+.pagination-wrapper .page-link {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+/* Mobile Responsive Pagination */
+@media (max-width: 576px) {
+    .pagination-wrapper {
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+    
+    .pagination-wrapper .pagination {
+        gap: 0;
+        padding: 5px 0 15px 0;
+    }
+    
+    .pagination-wrapper .page-link {
+        padding: 6px 10px;
+        font-size: 13px;
+        min-width: 36px;
+    }
+    
+    .pagination-wrapper .page-item.active .page-link {
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .pagination-wrapper .page-link {
+        padding: 5px 8px;
+        font-size: 12px;
+        min-width: 32px;
+    }
+    
+    .pagination-wrapper .page-item.active .page-link {
+        padding: 5px 8px;
+    }
+}
+
 .review-form-section {
     margin-top: 30px;
 }
@@ -1090,6 +1489,354 @@ body[dir="rtl"] .product-detail__slide-two__small .slick-next {
 .login-prompt p {
     margin-bottom: 15px;
     color: #666;
+}
+
+/* Review Replies Styles */
+.review-replies {
+    margin-top: 15px;
+    padding-left: 65px;
+}
+
+.reply {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.reply:last-child {
+    margin-bottom: 0;
+}
+
+.reply__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.reply__header__avatar img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reply__header__avatar.admin img {
+    border: 2px solid #28a745;
+}
+
+.reply__header__info h6 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.reply__header__info p {
+    margin: 2px 0 0 0;
+    color: #666;
+    font-size: 12px;
+}
+
+.reply__content {
+    color: #555;
+    line-height: 1.5;
+    font-size: 14px;
+    margin: 0;
+    padding-left: 46px;
+}
+
+.reply-form-container {
+    margin-top: 15px;
+}
+
+.btn-reply-toggle {
+    background: none;
+    border: none;
+    color: #aa6969;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.btn-reply-toggle:hover {
+    color: #8a5555;
+    text-decoration: underline;
+}
+
+.reply-form {
+    margin-top: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.reply-form .form-group {
+    margin-bottom: 10px;
+}
+
+.reply-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Reviews Section (Direct display below description) */
+.product-detail__content__description {
+    margin-bottom: 20px;
+}
+
+.product-detail__content__description h5 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product-detail__content__description p {
+    color: #555;
+    line-height: 1.8;
+}
+
+.product-detail__content__reviews {
+    margin-top: 30px;
+}
+
+.product-detail__content__reviews h5 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* RTL Support for replies */
+body[dir="rtl"] .review-replies {
+    padding-right: 65px;
+    padding-left: 0;
+}
+
+body[dir="rtl"] .reply__content {
+    padding-right: 46px;
+    padding-left: 0;
+}
+
+body[dir="rtl"] .btn-secondary {
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+@media (max-width: 576px) {
+    .review-replies {
+        padding-left: 45px;
+    }
+    
+    body[dir="rtl"] .review-replies {
+        padding-right: 45px;
+        padding-left: 0;
+    }
+    
+    .reply__content {
+        padding-left: 36px;
+    }
+    
+    body[dir="rtl"] .reply__content {
+        padding-right: 36px;
+        padding-left: 0;
+    }
+}
+
+/* Review Management Styles */
+.review-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.review__header__rate {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.review__header__rate .rate {
+    display: flex;
+    gap: 2px;
+}
+
+.btn-edit-review,
+.btn-delete-review {
+    background: none;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.btn-edit-review {
+    color: #007bff;
+}
+
+.btn-edit-review:hover {
+    color: #0056b3;
+    background: #e7f1ff;
+}
+
+.btn-delete-review {
+    color: #dc3545;
+}
+
+.btn-delete-review:hover {
+    color: #c82333;
+    background: #f8d7da;
+}
+
+.review-edit-form {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.review-edit-form .form-group {
+    margin-bottom: 15px;
+}
+
+.review-edit-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* RTL Support for review actions */
+body[dir="rtl"] .review-actions {
+    flex-direction: row-reverse;
+}
+
+body[dir="rtl"] .review__header__rate {
+    align-items: flex-start;
+}
+
+body[dir="rtl"] .btn-edit-review,
+body[dir="rtl"] .btn-delete-review {
+    flex-direction: row-reverse;
+}
+
+@media (max-width: 576px) {
+    .review-actions {
+        flex-wrap: wrap;
+    }
+    
+    .review__header__rate {
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .review__header {
+        flex-wrap: wrap;
+    }
+}
+
+/* SweetAlert Review Form Styles */
+.swal-rating-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.swal-rating-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.swal-rating-input {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    direction: rtl;
+}
+
+.swal-rating-input input[type="radio"] {
+    display: none;
+}
+
+.swal-star {
+    cursor: pointer;
+    font-size: 32px;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.swal-star:hover,
+.swal-star:hover ~ .swal-star,
+.swal-rating-input input:checked ~ .swal-star {
+    color: #ffc107;
+}
+
+.swal-form-group {
+    margin-bottom: 15px;
+}
+
+.swal-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-align: right;
+}
+
+.swal-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.swal-textarea:focus {
+    outline: none;
+    border-color: #aa6969;
+    box-shadow: 0 0 0 2px rgba(170, 105, 105, 0.25);
+}
+
+/* RTL Support for SweetAlert */
+body[dir="rtl"] .swal-rating-input {
+    flex-direction: row;
+}
+
+body[dir="rtl"] .swal-form-group label {
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+    .swal-star {
+        font-size: 28px;
+    }
 }
 </style>
 @endsection

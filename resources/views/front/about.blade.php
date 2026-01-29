@@ -21,18 +21,16 @@
                             <div class="introduction-one-image__detail">
                                 @if (!empty($ab->intro_one_bg1))
                                     <img data-depth="0.5" src="{{ asset($ab->intro_one_bg1) }}"
-                                        alt="background">
+                                       >
                                 @else
-                                    <img src="{{ asset('app/assets/images/introduction/IntroductionOne/img1.png') }}"
-                                        alt="background">
+                                    
                                 @endif
 
                                   @if (!empty($ab->intro_one_bg2))
                                     <img data-depth="0.5" src="{{ asset($ab->intro_one_bg2) }}"
-                                        alt="background">
+                                       >
                                 @else
-                                      <img src="{{ asset('app/assets/images/introduction/IntroductionOne/img2.png') }}"
-                                    alt="background">
+                                    
                                 @endif
                             
                             </div>
@@ -40,13 +38,13 @@
                                 <div class="background__item">
                                     <div class="wrapper" ref="{bg1}"><img data-depth="0.5"
                                             src="{{ asset('app/assets/images/introduction/IntroductionOne/bg1.png') }}"
-                                            alt="background"></div>
+                                           ></div>
                                 </div>
                                 <div class="background__item">
                                     <div class="wrapper" ref="{bg2}"><img data-depth="0.3" data-invert-x=""
                                             data-invert-y=""
                                             src="{{ asset('app/assets/images/introduction/IntroductionOne/bg2.png') }}"
-                                            alt="background"></div>
+                                           ></div>
                                 </div>
                             </div>
                         </div>

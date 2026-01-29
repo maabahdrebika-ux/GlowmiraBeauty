@@ -35,6 +35,12 @@
                         <span>{{ __('app.wishlist') }}</span>
                     </a>
                 </li>
+                <li class="tab-item">
+                    <a href="#" class="tab-link" data-tab="reviews">
+                        <i class="fas fa-star"></i>
+                        <span>{{ __('app.my_reviews') }}</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -461,6 +467,77 @@
                                     <i class="fas fa-heart"></i>
                                     <h4>{{ __('app.no_items_in_wishlist') }}</h4>
                                     <p>{{ __('app.add_items_to_wishlist') }}</p>
+                                    <a href="{{ route('all_products') }}" class="btn btn-primary">
+                                        {{ __('app.browse_products') }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Reviews Tab Content -->
+                    <div class="tab-content" id="reviews-content">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h3>{{ __('app.my_reviews') }}</h3>
+                            </div>
+
+                            @if(isset($myReviews) && $myReviews->count() > 0)
+                                <div class="reviews-list">
+                                    @foreach($myReviews as $review)
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <div class="review-product-info">
+                                                    @if($review->product)
+                                                        <a href="{{ route('product/info', encrypt($review->product->id)) }}">
+                                                            @if($review->product->image)
+                                                                <img src="{{ asset('images/product/'.rawurlencode($review->product->image)) }}" alt="{{ $review->product->name }}" class="review-product-image"/>
+                                                            @else
+                                                                <img src="{{ asset('images/product/default-product.jpg') }}" alt="{{ $review->product->name }}" class="review-product-image"/>
+                                                            @endif
+                                                            <span>
+                                                                {{ app()->getLocale() == 'ar' 
+                                                                    ? ($review->product->name ?? $review->product->namee) 
+                                                                    : ($review->product->namee ?? $review->product->name) }}
+                                                            </span>
+                                                        </a>
+                                                    @else
+                                                        <span>{{ __('app.product_unavailable') }}</span>
+                                                    @endif
+                                                </div>
+                                                <div class="review-date">
+                                                    {{ $review->created_at->format('M d, Y') }}
+                                                </div>
+                                            </div>
+                                            <div class="review-rating">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= $review->rating)
+                                                        <i class="fas fa-star"></i>
+                                                    @else
+                                                        <i class="far fa-star"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                            <div class="review-comment">
+                                                <p>{{ $review->comment }}</p>
+                                            </div>
+                                            @if($review->is_verified_purchase)
+                                                <div class="verified-badge">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    {{ __('app.verified_purchase') }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="pagination-wrapper">
+                                    {{ $myReviews->links() }}
+                                </div>
+                            @else
+                                <div class="empty-state">
+                                    <i class="fas fa-star"></i>
+                                    <h4>{{ __('app.no_reviews_yet') }}</h4>
+                                    <p>{{ __('app.write_first_review') }}</p>
                                     <a href="{{ route('all_products') }}" class="btn btn-primary">
                                         {{ __('app.browse_products') }}
                                     </a>
@@ -1512,6 +1589,81 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* Reviews Tab Styles */
+        .review-item {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .review-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .review-product-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .review-product-info a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .review-product-info a:hover {
+            color: #aa6969;
+        }
+
+        .review-product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .review-product-info span {
+            font-weight: 500;
+        }
+
+        .review-date {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .review-rating {
+            color: #ffc107;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-rating i {
+            margin-right: 2px;
+        }
+
+        .review-comment {
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .review-comment p {
+            margin: 0;
         }
     }
 

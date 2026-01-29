@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Review extends Model
 {
@@ -41,6 +42,14 @@ class Review extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(products::class, 'products_id');
+    }
+
+    /**
+     * Get all replies for this review
+     */
+    public function replies(): HasMany
+    {
+        return $this->hasMany(ReviewReply::class, 'review_id')->latest();
     }
 
     /**

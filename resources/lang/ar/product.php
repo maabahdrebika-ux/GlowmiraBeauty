@@ -91,4 +91,6 @@ return [
     'image_gallery_modal_title' => 'معرض الصور',
     'previous' => 'السابق',
     'next' => 'التالي',
+    'reply' => 'رد',
+    'enter_your_reply' => 'ضع تعليقك',
 ];

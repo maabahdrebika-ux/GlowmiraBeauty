@@ -44,6 +44,11 @@ Route::put('reviews/{id}', [App\Http\Controllers\ReviewController::class, 'updat
 Route::delete('reviews/{id}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
 Route::get('reviews/product/{productId}', [App\Http\Controllers\ReviewController::class, 'getProductReviews'])->name('reviews.product');
 
+// Review Reply Routes
+Route::post('reviews/reply/store', [App\Http\Controllers\ReviewController::class, 'storeReply'])->name('reviews.reply.store');
+Route::put('reviews/reply/{id}', [App\Http\Controllers\ReviewController::class, 'updateReply'])->name('reviews.reply.update');
+Route::delete('reviews/reply/{id}', [App\Http\Controllers\ReviewController::class, 'destroyReply'])->name('reviews.reply.destroy');
+
 Route::post('cart/store', [App\Http\Controllers\CartController::class, 'store'])->name('cart.store');
 Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
 Route::get('/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('checkout');

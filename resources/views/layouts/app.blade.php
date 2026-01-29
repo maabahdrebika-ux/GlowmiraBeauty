@@ -147,11 +147,11 @@
         }
         .sidebar-menu .has_sub ul li.active a {
             color: #fff;
-            background-color: #667eea;
+            background-color: #f11;
             border-left-color: #ffd700;
         }
         .sidebar-menu .has_sub.active > a {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f11 0%, #764ba2 100%);
             color: #fff;
         }
         .sidebar-menu .has_sub.active > a .fa-star {

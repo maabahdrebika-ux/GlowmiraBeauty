@@ -256,7 +256,7 @@ class IndexController extends Controller
     
         $categoriess=Categories::find($categoryId);
       
-        $query = products::with('categories')
+        $query = products::with('categories', 'stocks', 'discounts')
             ->where('is_available', 1)
             ->where('categories_id', $categoryId);
 
@@ -386,7 +386,7 @@ class IndexController extends Controller
     
     public function products(Request $request)
     {
-        $query = products::with('categories', 'imagesfiles')
+        $query = products::with('categories', 'imagesfiles', 'stocks', 'discounts')
             ->where('is_available', 1);
 
         // Apply search filter
@@ -572,7 +572,7 @@ class IndexController extends Controller
             ->paginate(12)
             ->appends(request()->all());
 
-        $discount = Discount::all(); // updated to fetch all records
+        $allDiscounts = Discount::all(); // updated to fetch all records
         $sizes = Size::all();         // updated to fetch all records
         $coolors = Coolor::all();       // updated to fetch all records
         $colors = DB::table('stocks')
@@ -582,15 +582,16 @@ class IndexController extends Controller
             ->paginate(12)
             ->appends(request()->all());
         
-        // Load product reviews with customer information
-        $reviews = Review::with('customer')
+        // Load product reviews with customer information and replies
+        // Show all reviews (including unapproved) for demo purposes
+        // To show only approved reviews, add: ->where('is_approved', true)
+        $reviews = Review::with(['customer', 'replies.customer', 'replies.admin'])
             ->where('products_id', $productId)
-            ->where('is_approved', true)
             ->latest()
             ->paginate(10)
             ->appends(request()->all());
         
-        // Get review statistics
+        // Get review statistics (only approved for statistics)
         $averageRating = Review::getAverageRating($productId);
         $reviewCount = Review::getReviewCount($productId);
         $ratingDistribution = Review::getRatingDistribution($productId);

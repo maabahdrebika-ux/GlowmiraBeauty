@@ -5,6 +5,42 @@
 @section('styles')
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        /* Stock Badge Styles */
+        .product-type .stock-badge {
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 3px;
+            display: inline-block;
+            text-transform: uppercase;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* Very low stock (1-2) - Red */
+        .product-type .stock-badge.stock-critical {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            animation: pulse 1s infinite;
+        }
+        
+        /* Low stock (3-4) - Orange */
+        .product-type .stock-badge.stock-low {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Out of stock - Gray */
+        .product-type .stock-badge.stock-out {
+            background: linear-gradient(135deg, #f11, #764ba2);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 10px 5px rgba(255, 75, 43, 0.3); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0); }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -27,8 +63,8 @@
             <div class="col-12 col-md-8 col-lg-9">
               <div class="shop-header">
                 
-                <form method="GET" style="display: inline;">
-                  <select class="customed-select" name="sort" onchange="this.form.submit()">
+                <form method="GET" action="" style="display: inline;" id="sort-form">
+                  <select class="customed-select" name="sort" id="sort-select">
                     <option value="az">{{ trans('products.a_to_z') }}</option>
                     <option value="za">{{ trans('products.z_to_a') }}</option>
                     <option value="low-high">{{ trans('products.low_to_high') }}</option>
@@ -47,6 +83,13 @@
                                 <h5 class="-sale">-{{ $product->discounts->first()->percentage }}%</h5>
                               @elseif($product->created_at > now()->subDays(30))
                                 <h5 class="-new">{{ trans('products.new') }}</h5>
+                              @endif
+                              @if($product->is_out_of_stock)
+                                <span class="stock-badge stock-out">{{ $product->out_of_stock_message }}</span>
+                              @elseif($product->is_critical_stock)
+                                <span class="stock-badge stock-critical">{{ $product->critical_stock_message }}</span>
+                              @elseif($product->is_low_stock)
+                                <span class="stock-badge stock-low">{{ $product->low_stock_message }}</span>
                               @endif
                             </div>
                             <div class="product-thumb">
@@ -202,6 +245,19 @@ function updateCartCount() {
 // Update cart count on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
+    
+    // Handle sort select for mobile - more reliable than onchange
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            document.getElementById('sort-form').submit();
+        });
+        
+        // Also handle touch events for mobile
+        sortSelect.addEventListener('touchend', function() {
+            // The change event will fire after selection
+        });
+    }
 });
 </script>
 

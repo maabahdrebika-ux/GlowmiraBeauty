@@ -341,4 +341,6 @@ return [
     'italy' => 'Italy',
     'germany' => 'Germany',
     'no_products' => 'No products available',
+    'reply'=>'Reply',
+    'enter_your_reply'=>'Enter your reply',
 ];

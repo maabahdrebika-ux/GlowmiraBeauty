@@ -376,6 +376,68 @@
                 box-shadow: none !important;
             }
         }
+
+        /* Pagination Mobile Responsive */
+        .pagination-wrapper {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .pagination-wrapper .pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 0;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .pagination-wrapper .page-item {
+            flex: 0 0 auto;
+            margin: 0 2px;
+        }
+
+        .pagination-wrapper .page-link {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 576px) {
+            .pagination-wrapper {
+                margin-top: 20px;
+                padding: 0 10px;
+            }
+            
+            .pagination-wrapper .pagination {
+                gap: 0;
+                padding: 5px 0 15px 0;
+            }
+            
+            .pagination-wrapper .page-link {
+                padding: 6px 10px;
+                font-size: 13px;
+                min-width: 36px;
+            }
+            
+            .pagination-wrapper .page-item.active .page-link {
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .pagination-wrapper .page-link {
+                padding: 5px 8px;
+                font-size: 12px;
+                min-width: 32px;
+            }
+            
+            .pagination-wrapper .page-item.active .page-link {
+                padding: 5px 8px;
+            }
+        }
     </style>
 </head>
 @if (app()->getLocale() == 'ar')
@@ -787,6 +849,14 @@ document.addEventListener('visibilitychange', function() {
 window.addEventListener('focus', function() {
     updateCartCount();
 });
+
+// Language switcher function for mobile
+function changeLanguage(lang) {
+   
+    
+    // Redirect to language change route
+    window.location.href = '{{ route("changeLanguage", ["language" => "LANG_PLACEHOLDER"]) }}'.replace('LANG_PLACEHOLDER', lang);
+}
 </script>
 </body>
 

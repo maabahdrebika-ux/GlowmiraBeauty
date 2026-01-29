@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderStatues;
+use App\Models\Review;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,13 @@ class CustomerDashboardController extends Controller
             ->get();
         $wishlistCount = $wishlistItems->count();
         
-        return view('front.customer.dashboard', compact('customer', 'orders', 'wishlistItems', 'wishlistCount', 'orderStatusCounts'));
+        // Load customer's reviews with product information
+        $myReviews = Review::with('product')
+            ->where('customer_id', $customer->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        
+        return view('front.customer.dashboard', compact('customer', 'orders', 'wishlistItems', 'wishlistCount', 'orderStatusCounts', 'myReviews'));
     }
 
     public function profile()

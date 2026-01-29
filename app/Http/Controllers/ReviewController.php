@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
+use App\Models\ReviewReply;
 use App\Models\products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -176,6 +177,117 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => __('reviews.error_loading_reviews')]);
+        }
+    }
+
+    /**
+     * Store a reply to a review
+     */
+    public function storeReply(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'review_id' => 'required|exists:reviews,id',
+            'comment' => 'required|string|min:2|max:1000',
+        ], [
+            'review_id.required' => __('reviews.review_id_required'),
+            'review_id.exists' => __('reviews.review_not_found'),
+            'comment.required' => __('reviews.reply_required'),
+            'comment.min' => __('reviews.reply_min_length'),
+            'comment.max' => __('reviews.reply_max_length'),
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                           ->withErrors($validator)
+                           ->withInput();
+        }
+
+        try {
+            $customer = Auth::guard('customer')->user();
+            $review = Review::findOrFail($request->review_id);
+
+            // Check if customer already replied to this review
+            $existingReply = ReviewReply::where('review_id', $review->id)
+                                      ->where('customer_id', $customer->id)
+                                      ->first();
+
+            if ($existingReply) {
+                Alert::warning(__('reviews.already_replied'));
+                return redirect()->back();
+            }
+
+            // Create new reply
+            $reply = new ReviewReply();
+            $reply->review_id = $review->id;
+            $reply->customer_id = $customer->id;
+            $reply->comment = $request->comment;
+            $reply->save();
+
+            Alert::success(__('reviews.reply_submitted_success'));
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Alert::error(__('reviews.error_submitting_reply'), $e->getMessage());
+            return redirect()->back()->withInput();
+        }
+    }
+
+    /**
+     * Update a reply
+     */
+    public function updateReply(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required|string|min:2|max:1000',
+        ], [
+            'comment.required' => __('reviews.reply_required'),
+            'comment.min' => __('reviews.reply_min_length'),
+            'comment.max' => __('reviews.reply_max_length'),
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                           ->withErrors($validator)
+                           ->withInput();
+        }
+
+        try {
+            $customer = Auth::guard('customer')->user();
+            $reply = ReviewReply::where('id', $id)
+                              ->where('customer_id', $customer->id)
+                              ->firstOrFail();
+
+            $reply->comment = $request->comment;
+            $reply->save();
+
+            Alert::success(__('reviews.reply_updated_success'));
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Alert::error(__('reviews.error_updating_reply'));
+            return redirect()->back()->withInput();
+        }
+    }
+
+    /**
+     * Delete a reply
+     */
+    public function destroyReply($id)
+    {
+        try {
+            $customer = Auth::guard('customer')->user();
+            $reply = ReviewReply::where('id', $id)
+                              ->where('customer_id', $customer->id)
+                              ->firstOrFail();
+
+            $reply->delete();
+
+            Alert::success(__('reviews.reply_deleted_success'));
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Alert::error(__('reviews.error_deleting_reply'));
+            return redirect()->back();
         }
     }
 

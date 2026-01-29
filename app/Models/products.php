@@ -67,4 +67,84 @@ class products extends Model
     {
         return $this->hasMany(Review::class, 'products_id');
     }
+
+    /**
+     * Get the total stock quantity across all variations
+     */
+    public function getTotalStockAttribute()
+    {
+        return $this->stocks()->sum('quantty');
+    }
+
+    /**
+     * Check if product has low stock (3-4)
+     */
+    public function getIsLowStockAttribute()
+    {
+        return $this->total_stock > 0 && $this->total_stock <= 4;
+    }
+
+    /**
+     * Check if product has critical stock (1-2)
+     */
+    public function getIsCriticalStockAttribute()
+    {
+        return $this->total_stock > 0 && $this->total_stock <= 2;
+    }
+
+    /**
+     * Get the stock level class for styling
+     */
+    public function getStockLevelClassAttribute()
+    {
+        if ($this->total_stock <= 0) {
+            return 'stock-out';
+        } elseif ($this->total_stock <= 2) {
+            return 'stock-critical';
+        } elseif ($this->total_stock <= 4) {
+            return 'stock-low';
+        }
+        return '';
+    }
+
+    /**
+     * Get the low stock message based on locale
+     */
+    public function getLowStockMessageAttribute()
+    {
+        if (app()->getLocale() == 'ar') {
+            return 'المتبقى ' . $this->total_stock . ' قطع فقط!';
+        }
+        return 'Only ' . $this->total_stock . ' left!';
+    }
+
+    /**
+     * Get the critical stock message based on locale
+     */
+    public function getCriticalStockMessageAttribute()
+    {
+        if (app()->getLocale() == 'ar') {
+            return 'قطعتين فقط!';
+        }
+        return 'Only 2 left!';
+    }
+
+    /**
+     * Check if product is out of stock
+     */
+    public function getIsOutOfStockAttribute()
+    {
+        return $this->total_stock <= 0;
+    }
+
+    /**
+     * Get out of stock message based on locale
+     */
+    public function getOutOfStockMessageAttribute()
+    {
+        if (app()->getLocale() == 'ar') {
+            return 'نفذت الكمية';
+        }
+        return 'Out of Stock';
+    }
 }

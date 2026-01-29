@@ -26,8 +26,8 @@
             <div class="col-12 col-md-8 col-lg-9">
               <div class="shop-header">
                 
-                <form method="GET" style="display: inline;">
-                  <select class="customed-select" name="sort" onchange="this.form.submit()">
+                <form method="GET" action="" style="display: inline;" id="sort-form">
+                  <select class="customed-select" name="sort" id="sort-select">
                     <option value="" {{ !request('sort') ? 'selected' : '' }}>{{ trans('products.sort_by') }}</option>
                     <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>{{ trans('products.a_to_z') }}</option>
                     <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>{{ trans('products.z_to_a') }}</option>
@@ -47,6 +47,13 @@
                                 <h5 class="-sale">-{{ $product->discounts->first()->percentage }}%</h5>
                               @elseif($product->created_at > now()->subDays(30))
                                 <h5 class="-new">{{ trans('products.new') }}</h5>
+                              @endif
+                              @if($product->is_out_of_stock)
+                                <span class="stock-badge stock-out">{{ $product->out_of_stock_message }}</span>
+                              @elseif($product->is_critical_stock)
+                                <span class="stock-badge stock-critical">{{ $product->critical_stock_message }}</span>
+                              @elseif($product->is_low_stock)
+                                <span class="stock-badge stock-low">{{ $product->low_stock_message }}</span>
                               @endif
                             </div>
                             <div class="product-thumb">
@@ -297,6 +304,16 @@ function updateWishlistCount() {
         console.error('Error updating wishlist count:', error);
     });
 }
+
+// Handle sort select for mobile - more reliable than onchange
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            document.getElementById('sort-form').submit();
+        });
+    }
+});
 </script>
 
 @endsection
